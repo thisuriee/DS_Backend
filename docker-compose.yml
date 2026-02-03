@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:15-alpine # Postgres 18 is quite new; 15/16 is safer for stability
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: ds_project
+      POSTGRES_USER: ds_project
+      POSTGRES_PASSWORD: dsproject # Match your application.properties
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ds_project -d ds_project" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  user-service:
+    build: .  # Use '.' if the Dockerfile is in the same folder as the compose file
+    container_name: user_service_app
+    ports:
+      - "8081:8081"
+    environment:
+      # We use the service name 'postgres' instead of 'localhost'
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ds_project
+      - SPRING_DATASOURCE_USERNAME=ds_project
+      - SPRING_DATASOURCE_PASSWORD=dsproject
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

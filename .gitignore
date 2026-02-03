@@ -1,0 +1,25 @@
+target/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# --- Specific to your setup ---
+.kotlin
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+logs/
+
+# --- IDEs ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
